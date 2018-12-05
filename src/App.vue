@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import goodsList from './components/views/goodsList.vue'
+import goodsList from './views/goodsList.vue'
 export default {
   name: 'App',
   components:{

@@ -8,36 +8,28 @@
             <span class="sortby">Sort by:</span>
             <a href="javascript:void(0)" class="default cur">Default</a>
             <a href="javascript:void(0)" class="price">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
-            <a href="javascript:void(0)" class="filterby stopPop">Filter by</a>
+            <a href="javascript:void(0)" class="filterby stopPop"  @click.stop="showFilterPop">Filter by</a>
           </div>
           <div class="accessory-result">
             <!-- filter -->
-            <div class="filter stopPop" id="filter">
+            <div class="filter stopPop" id="filter" :class="{'filterby-show':filterBy}">
               <dl class="filter-price">
                 <dt>Price:</dt>
-                <dd><a href="javascript:void(0)">All</a></dd>
-                <dd>
-                  <a href="javascript:void(0)">0 - 100</a>
-                </dd>
-                <dd>
-                  <a href="javascript:void(0)">100 - 500</a>
-                </dd>
-                <dd>
-                  <a href="javascript:void(0)">500 - 1000</a>
-                </dd>
-                <dd>
-                  <a href="javascript:void(0)">1000 - 2000</a>
+                <dd><a href="javascript:void(0)" :class="{'cur':priceChecked == 'all'}" 
+                @click="priceChecked = 'all'">All</a></dd>
+                <!-- 通过index实现菜单切换 -->
+                <dd v-for="(item,index) in priceFilter">
+                  <a href="javascript:void(0)" @click="setprice(index)" :class="{'cur':priceChecked == index}">{{item.startPrice}} - {{item.endPrice}}</a>
                 </dd>
               </dl>
             </div>
-
             <!-- search result accessories list -->
             <div class="accessory-list-wrap">
               <div class="accessory-list col-4">
                 <ul>
                   <li>
                     <div class="pic">
-                      <a href="#"><img src="static/1.jpg" alt=""></a>
+                      <a href="#"><img v-lazy="'static/1.jpg'" alt=""></a>
                     </div>
                     <div class="main">
                       <div class="name">XX</div>
@@ -49,7 +41,7 @@
                   </li>
                   <li>
                     <div class="pic">
-                      <a href="#"><img src="static/2.jpg" alt=""></a>
+                      <a href="#"><img v-lazy="'static/2.jpg'" alt=""></a>
                     </div>
                     <div class="main">
                       <div class="name">XX</div>
@@ -61,7 +53,7 @@
                   </li>
                   <li>
                     <div class="pic">
-                      <a href="#"><img src="static/3.jpg" alt=""></a>
+                      <a href="#"><img v-lazy="'static/3.jpg'" alt=""></a>
                     </div>
                     <div class="main">
                       <div class="name">XX</div>
@@ -73,7 +65,7 @@
                   </li>
                   <li>
                     <div class="pic">
-                      <a href="#"><img src="static/4.jpg" alt=""></a>
+                      <a href="#"><img v-lazy="'static/4.jpg'" alt=""></a>
                     </div>
                     <div class="main">
                       <div class="name">XX</div>
@@ -89,16 +81,34 @@
           </div>
         </div>
       </div>
+      <div class="md-overlay" v-show="overLayFlag" @click.stop="closePop"></div>
     </div>
 </template>
 
 <script>
-import navHeader from './navheader.vue'
-import navBreak from './break.vue'
+import navHeader from '../components/navheader.vue'
+import navBreak from '../components/break.vue'
 export default {
     data(){
         return {
-            goodsList:""
+            goodsList:[],
+            priceFilter:[
+                {
+                    startPrice:'0.00',
+                    endPrice:'500.00'
+                },
+                {
+                    startPrice:'500.00',
+                    endPrice:'1000.00'
+                },
+                {
+                    startPrice:'1000.00',
+                    endPrice:'2000.00'
+                }
+            ],
+            priceChecked:'all',
+            filterBy:false,
+            overLayFlag:false
         }
     },
     components:{
@@ -106,7 +116,7 @@ export default {
       navBreak
     },
     created(){
-        this.$axios.get('/api/goods')
+        this.$axios.get('/goods')
         .then(res=>{
             console.log(res.data)
             this.goodsList=res.result
@@ -114,6 +124,16 @@ export default {
         .catch(error=>{
             console.log(error)
         })
+    },
+    methods:{
+         showFilterPop(){
+              this.filterBy=true;
+              this.overLayFlag=true;
+            },
+        closePop(){
+          this.filterBy=false;
+          this.overLayFlag=false;
+        }
     }
 }
 </script>

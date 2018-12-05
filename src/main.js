@@ -8,6 +8,17 @@ import router from './router'
 import Axios  from 'axios'
 Vue.prototype.$axios = Axios
 
+//导入懒加载
+import VueLazyload from 'vue-lazyload'
+
+Vue.use(VueLazyload, {
+    preLoad: 1.3,
+  //   error: '/assets/logo.png',
+    loading: '/static/loading-svg/loading-bars.svg',
+    attempt: 1
+
+  })
+
 Vue.config.productionTip = false
 
 //导入css样式
